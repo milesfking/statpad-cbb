@@ -218,3 +218,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Ingested CBBD payloads and derived tables
+data/raw/**
+data/processed/**
+data/coverage/**
+!data/**/.gitkeep
