@@ -55,6 +55,50 @@ class SeasonPaths:
     def coverage_report(self) -> Path:
         return self.coverage_dir / "ingest_coverage.json"
 
+    @property
+    def possessions(self) -> Path:
+        return self.processed_season / "possessions.parquet"
+
+    @property
+    def possession_coverage(self) -> Path:
+        return self.coverage_dir / "possession_coverage.json"
+
+    @property
+    def player_features(self) -> Path:
+        return self.processed_season / "player_features.parquet"
+
+    @property
+    def player_ratings(self) -> Path:
+        return self.processed_season / "player_ratings.parquet"
+
+    @property
+    def team_ratings(self) -> Path:
+        return self.processed_season / "team_ratings.parquet"
+
+    @property
+    def model_metrics(self) -> Path:
+        return self.coverage_dir / "rapm_metrics.json"
+
+    @property
+    def team_ratings_json(self) -> Path:
+        return self.processed_season / "team_ratings.json"
+
+    @property
+    def eda_dir(self) -> Path:
+        return self.coverage_dir / "eda"
+
+    @property
+    def backtest_metrics(self) -> Path:
+        return self.coverage_dir / "temporal_backtest.json"
+
+    @property
+    def backtest_game_predictions(self) -> Path:
+        return self.processed_season / "backtest_game_predictions.parquet"
+
+    @property
+    def season_priors(self) -> Path:
+        return self.processed_season / "season_priors.json"
+
 
 def write_json(path: Path, payload: Any, *, indent: int | None = 2) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
