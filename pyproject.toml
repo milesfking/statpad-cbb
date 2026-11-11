@@ -11,13 +11,19 @@ requires-python = ">=3.11"
 dependencies = [
     "httpx>=0.27",
     "python-dotenv>=1.0",
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "scikit-learn>=1.4",
+    "pandas>=2.1",
+    "pyarrow>=14",
+    "matplotlib>=3.8",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
 
 [project.scripts]
-statpad-cbb = "statpad_cbb.ingest.cli:main"
+statpad-cbb = "statpad_cbb.cli:main"
 
 [tool.setuptools.package-dir]
 "" = "src"
