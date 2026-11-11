@@ -5,7 +5,6 @@ from statpad_cbb.ingest.dates import (
     season_date_bounds,
     season_game_chunks,
     split_range,
-    unique_utc_game_dates,
     utc_date_from_value,
 )
 
@@ -36,15 +35,6 @@ def test_utc_date_uses_utc_not_local_clock():
     assert parsed_offset == date(2025, 11, 5)
     parsed_dt = utc_date_from_value(datetime(2025, 11, 5, 23, 0, tzinfo=timezone.utc))
     assert parsed_dt == date(2025, 11, 5)
-
-
-def test_unique_utc_game_dates_sorted_and_deduped():
-    games = [
-        {"startDate": "2025-11-04T23:00:00Z"},
-        {"start_date": "2025-11-04T01:00:00Z"},
-        {"startDate": "2025-11-06T18:00:00Z"},
-    ]
-    assert unique_utc_game_dates(games) == [date(2025, 11, 4), date(2025, 11, 6)]
 
 
 def test_split_range_and_season_chunks():

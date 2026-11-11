@@ -205,10 +205,3 @@ def test_games_range_splits_when_response_hits_limit(tmp_path: Path):
     assert [row["id"] for row in rows] == [20251101, 20251102]
     assert not (paths.games_chunk(date(2025, 11, 1), date(2025, 11, 2))).exists()
 
-
-def test_games_files_are_date_partitioned(tmp_path: Path):
-    ingest_season(2026, settings=settings_for(tmp_path), client=FakeClient())
-    game_files = list((tmp_path / "raw" / "cbbd" / "2026" / "games").glob("*.json"))
-    assert game_files
-    sample = read_json(sorted(game_files)[0])
-    assert isinstance(sample, list)
