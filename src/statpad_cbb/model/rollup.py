@@ -5,6 +5,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from statpad_cbb.model.design import is_ranked_conference
+
 
 def player_ratings_frame(
     *,
@@ -150,8 +152,16 @@ def team_rollup(
         )
     teams = pd.DataFrame(rows)
     out = teams.merge(observed, on="team_id", how="left")
+    if "conference" in out.columns:
+        out = out.loc[out["conference"].map(is_ranked_conference)].copy()
     out = out.sort_values("net_rating", ascending=False).reset_index(drop=True)
     out["rank"] = np.arange(1, len(out) + 1)
+    out["off_rank"] = (
+        out["off_rating"].rank(method="min", ascending=False).astype(int)
+    )
+    out["def_rank"] = (
+        out["def_rating"].rank(method="min", ascending=False).astype(int)
+    )
     return out
 
 
@@ -161,6 +171,8 @@ def teams_records(teams: pd.DataFrame) -> list[dict[str, Any]]:
         return []
     cols = [
         "rank",
+        "off_rank",
+        "def_rank",
         "team_id",
         "school",
         "conference",

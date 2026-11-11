@@ -1,0 +1,24 @@
+{
+  "generated_at": "2026-11-11T19:46:05+00:00",
+  "default_season": 2026,
+  "seasons": [
+    {
+      "season": 2027,
+      "label": "2026-27",
+      "status": "final",
+      "as_of": "2026-11-09"
+    },
+    {
+      "season": 2026,
+      "label": "2025-26",
+      "status": "live",
+      "as_of": "2026-04-07"
+    },
+    {
+      "season": 2025,
+      "label": "2024-25",
+      "status": "final",
+      "as_of": "2025-04-08"
+    }
+  ]
+}

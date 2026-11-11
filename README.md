@@ -111,6 +111,25 @@ python -m statpad_cbb eda --season 2027 --school Duke --player "Cameron Boozer"
 
 Outputs: `team_ratings.parquet` / `.json`, model metrics under coverage, and EDA under `data/coverage/cbbd/{season}/eda/`. Ingest reuses existing raw JSON unless you pass `--force`.
 
+## Rankings site (GitHub Pages)
+
+After `fit-rapm` or `evaluate`, export rankings JSON for the static site:
+
+```bash
+python -m statpad_cbb publish-site
+# or: python -m statpad_cbb publish-site --season 2026 --season 2027
+```
+
+This writes `web/public/data/{season}/teams.json`, `conferences.json`, `players.json`, and `web/public/data/rankings_meta.json` (per-season as-of dates from games in the possession sample). Commit those files and push; GitHub Actions builds `web/` and deploys to Pages.
+
+Local UI dev:
+
+```bash
+cd web && npm install && npm run dev
+```
+
+Ratings are pts per 100 possessions (higher defensive `def_rating` is better). The current `DEFAULT_SEASON` is marked `live` in the manifest; older seasons are `final`.
+
 ## What is pulled
 
 | Step | Endpoint | Cadence |
@@ -132,6 +151,8 @@ src/statpad_cbb/possessions/   lineup tracking + possession table
 src/statpad_cbb/features/      player-season box/minutes features
 src/statpad_cbb/model/         hierarchical RAPM fit, CV, roll-up
 src/statpad_cbb/eda/           team and player diagnostic plots
+src/statpad_cbb/publish/       export rankings JSON for the public site
+web/                           Vite + React rankings UI (GitHub Pages)
 data/raw/cbbd/{season}/        untouched API payloads
 data/processed/cbbd/{season}/  teams/players/games/plays + parquet/JSON outputs
 data/coverage/cbbd/{season}/   ingest + model coverage/metrics + eda/

@@ -15,6 +15,7 @@ from statpad_cbb.model.design import (
     OFF_COLS,
     build_design_matrix,
     build_player_maps,
+    build_team_conference_lookup,
 )
 from statpad_cbb.features.pipeline import build_player_features_frame
 from statpad_cbb.model.priors import (
@@ -489,7 +490,13 @@ def run_temporal_backtest(
                 for pid in train_poss[col].tolist()
             }
         )
-        conf_map, team_map = build_player_maps(train_players, roster=roster, teams=teams_frame)
+        team_conference = build_team_conference_lookup(teams_frame)
+        conf_map, team_map = build_player_maps(
+            train_players,
+            roster=roster,
+            teams=teams_frame,
+            possessions=train_poss,
+        )
 
         train_game_ids = set(int(x) for x in train_poss["game_id"].unique())
         features, _ = build_player_features_frame(
@@ -509,6 +516,7 @@ def run_temporal_backtest(
             train_poss,
             player_conference=conf_map,
             player_team=team_map,
+            team_conference=team_conference,
             include_conference=include_conference,
             include_team=include_team,
             box_by_player=box_spec.box_by_player if box_spec.include_in_design else None,

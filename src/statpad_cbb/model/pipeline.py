@@ -15,6 +15,8 @@ from statpad_cbb.model.design import (
     OFF_COLS,
     build_design_matrix,
     build_player_maps,
+    build_team_conference_lookup,
+    is_ranked_conference,
 )
 from statpad_cbb.model.priors import (
     build_prior_mean_vector,
@@ -106,6 +108,8 @@ def _group_tables(fit) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     conferences = []
     if fit.conf_off is not None and fit.conf_def is not None:
         for i, name in enumerate(fit.conference_names):
+            if not is_ranked_conference(name):
+                continue
             conferences.append(
                 {
                     "conference": name,
@@ -189,7 +193,13 @@ def fit_rapm(
     player_ids = sorted(
         {int(pid) for col in OFF_COLS + DEF_COLS for pid in possessions[col].tolist()}
     )
-    conf_map, team_map = build_player_maps(player_ids, roster=roster, teams=teams_frame)
+    team_conference = build_team_conference_lookup(teams_frame)
+    conf_map, team_map = build_player_maps(
+        player_ids,
+        roster=roster,
+        teams=teams_frame,
+        possessions=possessions,
+    )
 
     prior_artifact = None
     if prior_season is not None:
@@ -217,6 +227,7 @@ def fit_rapm(
         possessions,
         player_conference=conf_map,
         player_team=team_map,
+        team_conference=team_conference,
         include_conference=include_conference,
         include_team=include_team,
         box_by_player=box_spec.box_by_player if box_spec.include_in_design else None,

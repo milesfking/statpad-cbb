@@ -194,3 +194,45 @@ def test_unit_rating_matches_five_man_plus_group_effects():
     )
     # 5 * 1.0 + 2.0 + 0.5 = 7.5
     assert abs(float(teams.loc[teams.team_id == 10, "off_rating"].iloc[0]) - 7.5) < 1e-9
+
+
+def test_team_rollup_assigns_net_off_def_ranks():
+    ratings = pd.DataFrame(
+        [
+            {
+                "player_id": 1,
+                "team_id": 10,
+                "off_rating": 10.0,
+                "def_rating": 5.0,
+                "minutes": 100.0,
+            },
+            {
+                "player_id": 2,
+                "team_id": 20,
+                "off_rating": 8.0,
+                "def_rating": 8.0,
+                "minutes": 100.0,
+            },
+        ]
+    )
+    possessions = pd.DataFrame(
+        [
+            {"off_team_id": 10, "def_team_id": 20, "points": 1},
+            {"off_team_id": 20, "def_team_id": 10, "points": 1},
+        ]
+    )
+    out = team_rollup(
+        ratings,
+        possessions,
+        pd.DataFrame(),
+        team_lookup={
+            10: {"school": "A", "conference": "X"},
+            20: {"school": "B", "conference": "Y"},
+        },
+    )
+    assert set(out.columns) >= {"rank", "off_rank", "def_rank"}
+    top_net = int(out.loc[out["rank"] == 1, "team_id"].iloc[0])
+    assert top_net == 20  # 8+8=16 vs 10+5=15
+    by_id = out.set_index("team_id")
+    assert int(by_id.loc[20, "off_rank"]) == 2
+    assert int(by_id.loc[20, "def_rank"]) == 1

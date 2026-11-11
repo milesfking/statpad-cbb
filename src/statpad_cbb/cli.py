@@ -141,6 +141,37 @@ def build_parser() -> argparse.ArgumentParser:
         help="Override possessions/team used to scale PPP margins to points",
     )
 
+    publish = subparsers.add_parser(
+        "publish-site",
+        help="Export rankings JSON for the public site (web/public/data)",
+    )
+    publish.add_argument(
+        "--data-dir",
+        type=Path,
+        default=None,
+        help="Override data directory (default: STATPAD_DATA_DIR or ./data)",
+    )
+    publish.add_argument(
+        "--season",
+        type=int,
+        action="append",
+        dest="seasons",
+        default=None,
+        help="Season-ending year to export (repeatable). Default: all seasons in data",
+    )
+    publish.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="Output directory (default: repo web/public/data)",
+    )
+    publish.add_argument(
+        "--min-player-possessions",
+        type=float,
+        default=200.0,
+        help="Minimum on-court possessions for players.json export",
+    )
+
     return parser
 
 
@@ -360,6 +391,35 @@ def main(argv: list[str] | None = None) -> int:
         json.dump(summary, sys.stdout, indent=2)
         sys.stdout.write("\n")
         return 0
+
+    if args.command == "publish-site":
+        from statpad_cbb.publish.site import publish_site
+
+        try:
+            report = publish_site(
+                data_dir=args.data_dir,
+                output_dir=args.output,
+                seasons=args.seasons,
+                min_player_possessions=args.min_player_possessions,
+            )
+        except FileNotFoundError as exc:
+            logging.error("%s", exc)
+            return 1
+        json.dump(
+            {
+                "output_dir": report["output_dir"],
+                "seasons": report["seasons"],
+                "default_season": report["manifest"]["default_season"],
+                "generated_at": report["manifest"]["generated_at"],
+            },
+            sys.stdout,
+            indent=2,
+        )
+        sys.stdout.write("\n")
+        return 0
+
+    parser.error(f"Unknown command: {args.command}")
+    return 1
 
 
 if __name__ == "__main__":

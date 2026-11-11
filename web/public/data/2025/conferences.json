@@ -1,0 +1,281 @@
+[
+  {
+    "conference": "Southeastern Conference",
+    "off_rating": 4.43,
+    "def_rating": -2.11,
+    "net_rating": 2.32,
+    "rank": 1,
+    "off_rank": 1,
+    "def_rank": 2
+  },
+  {
+    "conference": "Big Ten Conference",
+    "off_rating": 4.0,
+    "def_rating": -1.73,
+    "net_rating": 2.28,
+    "rank": 2,
+    "off_rank": 2,
+    "def_rank": 1
+  },
+  {
+    "conference": "Big 12 Conference",
+    "off_rating": 3.88,
+    "def_rating": -2.25,
+    "net_rating": 1.63,
+    "rank": 3,
+    "off_rank": 3,
+    "def_rank": 3
+  },
+  {
+    "conference": "Big East Conference",
+    "off_rating": 3.83,
+    "def_rating": -2.45,
+    "net_rating": 1.38,
+    "rank": 4,
+    "off_rank": 4,
+    "def_rank": 4
+  },
+  {
+    "conference": "Atlantic Coast Conference",
+    "off_rating": 3.55,
+    "def_rating": -2.52,
+    "net_rating": 1.03,
+    "rank": 5,
+    "off_rank": 5,
+    "def_rank": 5
+  },
+  {
+    "conference": "Mountain West Conference",
+    "off_rating": 3.16,
+    "def_rating": -2.84,
+    "net_rating": 0.31,
+    "rank": 6,
+    "off_rank": 9,
+    "def_rank": 6
+  },
+  {
+    "conference": "West Coast Conference",
+    "off_rating": 3.38,
+    "def_rating": -3.08,
+    "net_rating": 0.3,
+    "rank": 7,
+    "off_rank": 7,
+    "def_rank": 7
+  },
+  {
+    "conference": "Conference USA",
+    "off_rating": 3.43,
+    "def_rating": -3.2,
+    "net_rating": 0.23,
+    "rank": 8,
+    "off_rank": 6,
+    "def_rank": 8
+  },
+  {
+    "conference": "United Athletic Conference",
+    "off_rating": 3.13,
+    "def_rating": -3.64,
+    "net_rating": -0.51,
+    "rank": 9,
+    "off_rank": 10,
+    "def_rank": 12
+  },
+  {
+    "conference": "American Athletic Conference",
+    "off_rating": 3.2,
+    "def_rating": -3.74,
+    "net_rating": -0.54,
+    "rank": 10,
+    "off_rank": 8,
+    "def_rank": 13
+  },
+  {
+    "conference": "Missouri Valley Conference",
+    "off_rating": 2.93,
+    "def_rating": -3.47,
+    "net_rating": -0.54,
+    "rank": 11,
+    "off_rank": 14,
+    "def_rank": 10
+  },
+  {
+    "conference": "Big West Conference",
+    "off_rating": 2.94,
+    "def_rating": -3.49,
+    "net_rating": -0.55,
+    "rank": 12,
+    "off_rank": 13,
+    "def_rank": 11
+  },
+  {
+    "conference": "Atlantic 10 Conference",
+    "off_rating": 2.72,
+    "def_rating": -3.46,
+    "net_rating": -0.73,
+    "rank": 13,
+    "off_rank": 15,
+    "def_rank": 9
+  },
+  {
+    "conference": "Summit League",
+    "off_rating": 3.0,
+    "def_rating": -3.86,
+    "net_rating": -0.86,
+    "rank": 14,
+    "off_rank": 12,
+    "def_rank": 14
+  },
+  {
+    "conference": "Mid-American Conference",
+    "off_rating": 3.05,
+    "def_rating": -3.98,
+    "net_rating": -0.93,
+    "rank": 15,
+    "off_rank": 11,
+    "def_rank": 19
+  },
+  {
+    "conference": "Big Sky Conference",
+    "off_rating": 2.53,
+    "def_rating": -3.88,
+    "net_rating": -1.36,
+    "rank": 16,
+    "off_rank": 17,
+    "def_rank": 15
+  },
+  {
+    "conference": "Horizon League",
+    "off_rating": 2.53,
+    "def_rating": -3.96,
+    "net_rating": -1.44,
+    "rank": 17,
+    "off_rank": 18,
+    "def_rank": 17
+  },
+  {
+    "conference": "Big South Conference",
+    "off_rating": 2.66,
+    "def_rating": -4.18,
+    "net_rating": -1.52,
+    "rank": 18,
+    "off_rank": 16,
+    "def_rank": 23
+  },
+  {
+    "conference": "Sun Belt Conference",
+    "off_rating": 2.31,
+    "def_rating": -4.08,
+    "net_rating": -1.77,
+    "rank": 19,
+    "off_rank": 20,
+    "def_rank": 21
+  },
+  {
+    "conference": "Coastal Athletic Association",
+    "off_rating": 2.27,
+    "def_rating": -4.06,
+    "net_rating": -1.79,
+    "rank": 20,
+    "off_rank": 21,
+    "def_rank": 20
+  },
+  {
+    "conference": "Southland Conference",
+    "off_rating": 2.12,
+    "def_rating": -3.96,
+    "net_rating": -1.84,
+    "rank": 21,
+    "off_rank": 24,
+    "def_rank": 18
+  },
+  {
+    "conference": "Mid-Eastern Athletic Conference",
+    "off_rating": 2.24,
+    "def_rating": -4.24,
+    "net_rating": -2.0,
+    "rank": 22,
+    "off_rank": 22,
+    "def_rank": 26
+  },
+  {
+    "conference": "ASUN Conference",
+    "off_rating": 2.4,
+    "def_rating": -4.41,
+    "net_rating": -2.01,
+    "rank": 23,
+    "off_rank": 19,
+    "def_rank": 29
+  },
+  {
+    "conference": "Ivy League",
+    "off_rating": 1.78,
+    "def_rating": -3.9,
+    "net_rating": -2.12,
+    "rank": 24,
+    "off_rank": 27,
+    "def_rank": 16
+  },
+  {
+    "conference": "America East Conference",
+    "off_rating": 2.09,
+    "def_rating": -4.49,
+    "net_rating": -2.41,
+    "rank": 25,
+    "off_rank": 25,
+    "def_rank": 30
+  },
+  {
+    "conference": "Southwestern Athletic Conference",
+    "off_rating": 2.22,
+    "def_rating": -4.63,
+    "net_rating": -2.41,
+    "rank": 26,
+    "off_rank": 23,
+    "def_rank": 31
+  },
+  {
+    "conference": "Ohio Valley Conference",
+    "off_rating": 1.91,
+    "def_rating": -4.36,
+    "net_rating": -2.45,
+    "rank": 27,
+    "off_rank": 26,
+    "def_rank": 28
+  },
+  {
+    "conference": "Southern Conference",
+    "off_rating": 1.76,
+    "def_rating": -4.2,
+    "net_rating": -2.45,
+    "rank": 28,
+    "off_rank": 28,
+    "def_rank": 25
+  },
+  {
+    "conference": "Patriot League",
+    "off_rating": 1.67,
+    "def_rating": -4.12,
+    "net_rating": -2.45,
+    "rank": 29,
+    "off_rank": 30,
+    "def_rank": 22
+  },
+  {
+    "conference": "Metro Conference",
+    "off_rating": 1.7,
+    "def_rating": -4.2,
+    "net_rating": -2.49,
+    "rank": 30,
+    "off_rank": 29,
+    "def_rank": 24
+  },
+  {
+    "conference": "Northeast Conference",
+    "off_rating": 1.56,
+    "def_rating": -4.31,
+    "net_rating": -2.75,
+    "rank": 31,
+    "off_rank": 31,
+    "def_rank": 27
+  }
+]

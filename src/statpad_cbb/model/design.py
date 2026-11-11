@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import defaultdict
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -11,6 +12,58 @@ OFF_COLS = [f"off_player_{i}" for i in range(1, 6)]
 DEF_COLS = [f"def_player_{i}" for i in range(1, 6)]
 
 # Small, stable box feature set for hierarchical player means.
+UNKNOWN_CONFERENCE = "Unknown"
+
+
+def is_ranked_conference(conf: str | None) -> bool:
+    if conf is None:
+        return False
+    text = str(conf).strip()
+    return bool(text) and text.lower() != UNKNOWN_CONFERENCE.lower()
+
+
+def build_team_conference_lookup(teams: pd.DataFrame) -> dict[int, str]:
+    """team_id -> conference from the season teams directory."""
+    out: dict[int, str] = {}
+    for row in teams.itertuples(index=False):
+        if pd.isna(row.team_id):
+            continue
+        if not is_ranked_conference(getattr(row, "conference", None)):
+            continue
+        out[int(row.team_id)] = str(row.conference).strip()
+    return out
+
+
+def infer_player_teams_from_possessions(
+    possessions: pd.DataFrame,
+    roster_team: dict[int, int],
+) -> dict[int, int]:
+    """Assign team_id from on-court possessions when a player is missing from roster."""
+    counts: dict[int, dict[int, int]] = defaultdict(lambda: defaultdict(int))
+    for side, cols in (("off", OFF_COLS), ("def", DEF_COLS)):
+        tid_col = f"{side}_team_id"
+        if tid_col not in possessions.columns:
+            continue
+        team_ids = possessions[tid_col].to_numpy()
+        for col in cols:
+            if col not in possessions.columns:
+                continue
+            player_ids = possessions[col].to_numpy()
+            for pid, tid in zip(player_ids, team_ids, strict=False):
+                if pd.isna(pid) or pd.isna(tid):
+                    continue
+                counts[int(pid)][int(tid)] += 1
+
+    out = dict(roster_team)
+    for pid, team_counts in counts.items():
+        if pid in out:
+            continue
+        if team_counts:
+            best_team = max(team_counts.items(), key=lambda kv: kv[1])[0]
+            out[pid] = int(best_team)
+    return out
+
+
 BOX_FEATURE_COLS = [
     "usage",
     "fg2m_100",
@@ -71,27 +124,26 @@ def build_player_maps(
     *,
     roster: pd.DataFrame,
     teams: pd.DataFrame,
+    possessions: pd.DataFrame | None = None,
 ) -> tuple[dict[int, str], dict[int, int]]:
     """Return (player->conference, player->team_id)."""
-    team_conf = {
-        int(row.team_id): str(row.conference) if pd.notna(row.conference) else "Unknown"
-        for row in teams.itertuples(index=False)
-        if pd.notna(row.team_id)
-    }
+    team_conf = build_team_conference_lookup(teams)
     player_team = {
         int(row.player_id): int(row.team_id)
         for row in roster.itertuples(index=False)
         if pd.notna(row.player_id) and pd.notna(row.team_id)
     }
+    if possessions is not None:
+        player_team = infer_player_teams_from_possessions(possessions, player_team)
     conf_map: dict[int, str] = {}
     team_map: dict[int, int] = {}
     for pid in player_ids:
         team_id = player_team.get(int(pid))
         if team_id is None:
-            conf_map[int(pid)] = "Unknown"
+            conf_map[int(pid)] = UNKNOWN_CONFERENCE
             continue
-        team_map[int(pid)] = team_id
-        conf_map[int(pid)] = team_conf.get(team_id, "Unknown")
+        team_map[int(pid)] = int(team_id)
+        conf_map[int(pid)] = team_conf.get(int(team_id), UNKNOWN_CONFERENCE)
     return conf_map, team_map
 
 
@@ -194,6 +246,7 @@ def build_design_matrix(
     *,
     player_conference: dict[int, str] | None = None,
     player_team: dict[int, int] | None = None,
+    team_conference: dict[int, str] | None = None,
     include_conference: bool = False,
     include_team: bool = False,
     box_by_player: dict[int, np.ndarray] | None = None,
@@ -228,15 +281,18 @@ def build_design_matrix(
 
     conf_map = player_conference or {}
     team_map = player_team or {}
-    team_to_conf = {
-        tid: conf_map.get(pid, "Unknown")
+    team_conf_lookup = team_conference or {
+        tid: conf_map.get(pid, UNKNOWN_CONFERENCE)
         for pid, tid in team_map.items()
     }
+    team_to_conf = team_conf_lookup
 
     conference_names: list[str] = []
     conf_index: dict[str, int] = {}
     if include_conference:
-        conference_names = sorted({conf_map.get(pid, "Unknown") for pid in player_ids})
+        names = {conf_map.get(pid, UNKNOWN_CONFERENCE) for pid in player_ids}
+        names.update(team_conf_lookup.values())
+        conference_names = sorted(n for n in names if is_ranked_conference(n))
         conf_index = {name: i for i, name in enumerate(conference_names)}
     n_conf = len(conference_names)
 
@@ -334,18 +390,22 @@ def build_design_matrix(
                 indices.append(team_def0 + team_index[def_tid])
                 data.append(-1.0)
         if include_conference and conf_off0 is not None and conf_def0 is not None:
-            if off_tid in team_to_conf:
+            if off_tid in team_conf_lookup:
+                off_conf = team_conf_lookup[off_tid]
+            elif off_tid in team_to_conf:
                 off_conf = team_to_conf[off_tid]
             else:
-                off_conf = str(_majority_key(off_values[i], conf_map, default="Unknown"))
-            if def_tid in team_to_conf:
+                off_conf = str(_majority_key(off_values[i], conf_map, default=UNKNOWN_CONFERENCE))
+            if def_tid in team_conf_lookup:
+                def_conf = team_conf_lookup[def_tid]
+            elif def_tid in team_to_conf:
                 def_conf = team_to_conf[def_tid]
             else:
-                def_conf = str(_majority_key(def_values[i], conf_map, default="Unknown"))
-            if off_conf in conf_index:
+                def_conf = str(_majority_key(def_values[i], conf_map, default=UNKNOWN_CONFERENCE))
+            if is_ranked_conference(off_conf) and off_conf in conf_index:
                 indices.append(conf_off0 + conf_index[off_conf])
                 data.append(1.0)
-            if def_conf in conf_index:
+            if is_ranked_conference(def_conf) and def_conf in conf_index:
                 indices.append(conf_def0 + conf_index[def_conf])
                 data.append(-1.0)
 
@@ -398,7 +458,7 @@ def build_design_matrix(
         n_conf=n_conf,
         n_team=n_team,
         n_box=n_box,
-        player_conference={pid: conf_map.get(pid, "Unknown") for pid in player_ids},
+        player_conference={pid: conf_map.get(pid, UNKNOWN_CONFERENCE) for pid in player_ids},
         player_team={pid: team_map[pid] for pid in player_ids if pid in team_map},
         box_feature_names=box_names,
         box_mean=dict(box_mean or {}),
